@@ -1,0 +1,14 @@
+{
+    "name": "hexd/mycode",
+    "description": "myself code",
+    "type": "library",
+    "license": "mit",
+    "authors": [
+        {
+            "name": "hexd",
+            "email": "hexiaodong2810@163.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
