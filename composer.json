@@ -9,6 +9,7 @@
             "email": "hexiaodong2810@163.com"
         }
     ],
+    "test": "",
     "minimum-stability": "dev",
     "require": {}
 }
