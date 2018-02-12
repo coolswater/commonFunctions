@@ -1,5 +1,5 @@
 {
-    "name": "hexd/commFunctions",
+    "name": "hexd/common_functions",
     "description": "常用函数库",
     "type": "library",
     "license": "mit",
