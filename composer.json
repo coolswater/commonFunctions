@@ -9,6 +9,6 @@
             "email": "hexiaodong2810@163.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "master",
     "require": {}
 }
