@@ -2,7 +2,7 @@
     "name": "hexd/common_functions",
     "description": "常用函数库",
     "type": "library",
-    "license": "mit",
+    "license": "MIT",
     "authors": [
         {
             "name": "hexd",
