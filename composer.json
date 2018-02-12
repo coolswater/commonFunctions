@@ -1,6 +1,6 @@
 {
-    "name": "hexd/mycode",
-    "description": "myself code",
+    "name": "hexd/commFunctions",
+    "description": "常用函数库",
     "type": "library",
     "license": "mit",
     "authors": [
