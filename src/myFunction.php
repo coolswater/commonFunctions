@@ -1,6 +1,4 @@
 <?php
-
-namespace MyFunction;
 date_default_timezone_set('PRC');
 /**
  * 常用方法封装
@@ -72,7 +70,7 @@ if (!function_exists("validEmail")) {
             return FALSE;
         }
         
-        return @eregi("^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$", $email);
+        return preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/", $email);
     }
 }
 
@@ -143,7 +141,7 @@ if (!function_exists("is_qq")) {
  */
 if (!function_exists("is_url")) {
     function is_url($str, $exp_results = FALSE) {
-        $RegExp = '/^(?:http\:\/\/)?[\w\.]+?\.(?:com|cn|mobi|net|org|so|co|gov|tel|tv|biz|cc|hk|name|info|asia|me|in).+$/';
+        $RegExp = '/^((ht|f)tps?):\/\/[\w\-]+(\.[\w\-]+)+([\w\-\.,@?^=%&:\/~\+#]*[\w\-\@?^=%&\/~\+#])?$/';
         if (!preg_match($RegExp, $str, $m)) {
             return FALSE;
         }
@@ -242,7 +240,7 @@ if (!function_exists("is_ip")) {
             }
         }
         
-        return @ereg("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", $gonten);
+        return preg_match("/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/", $gonten);
     }
 }
 
@@ -277,7 +275,7 @@ if (!function_exists("getParam")) {
                 $_str = (float)$str;
                 break;
             case 'html': //获取HTML，防止XSS攻击
-                $_str = self::reMoveXss($str);
+                $_str = reMoveXss($str);
                 break;
             case 'time':
                 $_str = $str ? strtotime($str) : '';
@@ -536,7 +534,7 @@ if (!function_exists("filter_form")) {
  */
 if (!function_exists("filter_inject")) {
     function filter_inject($sql_str) {
-        return @eregi('select|insert|and|or|update|delete|\'|\/\*|\*|\.\.\/|\.\/|union|into|load_file|outfile', $sql_str); // 进行过滤
+        return @preg_match('select|insert|and|or|update|delete|\'|\/\*|\*|\.\.\/|\.\/|union|into|load_file|outfile', $sql_str); // 进行过滤
     }
 }
 
@@ -836,7 +834,7 @@ function sendHttp($url, $data = array(), $post = TRUE, $httpHeader = array(), $c
         CURLOPT_RETURNTRANSFER => TRUE,
         CURLOPT_USERAGENT      => 'CURL ' . date('Y-m-d H:i:s'),
         CURLOPT_FOLLOWLOCATION => TRUE,
-        CURLOPT_TIMEOUT        => HTTP_TIMEOUT,
+        CURLOPT_TIMEOUT        => 10,
     );
     if ($post) {
         $options[CURLOPT_POST] = TRUE;
@@ -1087,130 +1085,6 @@ function PJsonMsg($code, $msg, $data = array()) {
         'body'   => $data,
     );
     printJson($result);
-}
-
-//AES加密解密算法
-class CryptAES {
-    protected $cipher = MCRYPT_RIJNDAEL_128;
-    protected $mode = MCRYPT_MODE_ECB;
-    protected $pad_method = NULL;
-    protected $secret_key = '';
-    protected $iv = '';
-    
-    public function __construct($key) {
-        $this->require_pkcs5();
-        $this->secret_key = $key;
-    }
-    
-    public function set_cipher($cipher) {
-        $this->cipher = $cipher;
-    }
-    
-    public function set_mode($mode) {
-        $this->mode = $mode;
-    }
-    
-    public function set_iv($iv) {
-        $this->iv = $iv;
-    }
-    
-    public function set_key($key) {
-        $this->secret_key = $key;
-    }
-    
-    public function require_pkcs5() {
-        $this->pad_method = 'pkcs5';
-    }
-    
-    protected function pad_or_unpad($str, $ext) {
-        if (is_null($this->pad_method)) {
-            return $str;
-        } else {
-            $func_name = __CLASS__ . '::' . $this->pad_method . '_' . $ext . 'pad';
-            if (is_callable($func_name)) {
-                $size = mcrypt_get_block_size($this->cipher, $this->mode);
-                
-                return call_user_func($func_name, $str, $size);
-            }
-        }
-        
-        return $str;
-    }
-    
-    protected function pad($str) {
-        return $this->pad_or_unpad($str, '');
-    }
-    
-    protected function unpad($str) {
-        return $this->pad_or_unpad($str, 'un');
-    }
-    
-    public function encrypt($str) {
-        $str = $this->pad($str);
-        $td = mcrypt_module_open($this->cipher, '', $this->mode, '');
-        
-        if (empty($this->iv)) {
-            $iv = @mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-        } else {
-            $iv = $this->iv;
-        }
-        
-        mcrypt_generic_init($td, $this->secret_key, $iv);
-        $cyper_text = mcrypt_generic($td, $str);
-        $rt = base64_encode($cyper_text);
-        //$rt = bin2hex($cyper_text);
-        mcrypt_generic_deinit($td);
-        mcrypt_module_close($td);
-        
-        return $rt;
-    }
-    
-    public function decrypt($str) {
-        $td = mcrypt_module_open($this->cipher, '', $this->mode, '');
-        
-        if (empty($this->iv)) {
-            $iv = @mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-        } else {
-            $iv = $this->iv;
-        }
-        
-        mcrypt_generic_init($td, $this->secret_key, $iv);
-        //$decrypted_text = mdecrypt_generic($td, self::hex2bin($str));
-        $decrypted_text = mdecrypt_generic($td, base64_decode($str));
-        $rt = $decrypted_text;
-        mcrypt_generic_deinit($td);
-        mcrypt_module_close($td);
-        
-        return $this->unpad($rt);
-    }
-    
-    public static function hex2bin($hexdata) {
-        $bindata = '';
-        $length = strlen($hexdata);
-        for ($i = 0; $i < $length; $i += 2) {
-            $bindata .= chr(hexdec(substr($hexdata, $i, 2)));
-        }
-        
-        return $bindata;
-    }
-    
-    public static function pkcs5_pad($text, $blocksize) {
-        $pad = $blocksize - (strlen($text) % $blocksize);
-        
-        return $text . str_repeat(chr($pad), $pad);
-    }
-    
-    public static function pkcs5_unpad($text) {
-        $pad = ord($text{strlen($text) - 1});
-        if ($pad > strlen($text)) {
-            return FALSE;
-        }
-        if (strspn($text, chr($pad), strlen($text) - $pad) != $pad) {
-            return FALSE;
-        }
-        
-        return substr($text, 0, -1 * $pad);
-    }
 }
 
 //新版 api3.3及以上的签名算法
@@ -1770,33 +1644,31 @@ class DrKey {
 }
 
 /**
- * AES加密字符串方法
+ * 使用openssl库进行加密
  *
- * @param   string $key    加密key
- * @param   string $string 被加密字符串
+ * @param  string $string 要加密字符串
+ * @param  string $key    加密key
  *
- * @return  string  $string 返回加密后的字符串
+ * @return string   $string 加密后的字符串
  */
-function aes_encode($key, $string) {
-    $aes = new CryptAES($key);
-    $string = $aes->encrypt($string);
+function opensslEncrypt($string, $key, $method = 'AES-256-ECB') {
+    $str = openssl_encrypt($string, $method, $key);
     
-    return $string;
+    return $str;
 }
 
 /**
- * AES解密字符串方法
+ * 使用openssl库进行解密
  *
- * @param   string $key    加密key
- * @param   string $string 被解密字符串
+ * @param  string $string 要解密字符串
+ * @param  string $key    解密key
  *
- * @return  string $string 返回解密后的字符串
+ * @return string   $string 解密后的字符串
  */
-function aes_decode($key, $string) {
-    $aes = new CryptAES($key);
-    $string = $aes->decrypt($string);
+function opensslDecrypt($string, $key, $method = 'AES-256-ECB') {
+    $str = openssl_decrypt($string, $method, $key);
     
-    return $string;
+    return $str;
 }
 
 //任意字符编码转换为UTF-8
@@ -2087,7 +1959,7 @@ function prevent_brush($key, $interval) {
     $brush_key = $key . ip2long(get_client_ip());
     $now = time();
     if (isset($_SESSION[$brush_key]) && ($now - $_SESSION[$brush_key] < 0)) {
-        PJsonMsg(REQUEST_FAIL, lang('server_busy'));
+        PJsonMsg(REQUEST_ERROR, lang('server_busy'));
     } else {
         $_SESSION[$brush_key] = $now + $interval;
     }
@@ -2202,7 +2074,7 @@ function get_week_range($first = 1) {
  *
  * @return false|string
  */
-function formatDate($time, $format = 'Y-m-d H:i:s', $offset = 60) {
+function formatDate($time, $format = 'Y/m/d H:i', $offset = 60) {
     $rtime = date($format, $time);
     $time = time() - $time;
     
@@ -2341,7 +2213,7 @@ if (!function_exists('array_sort_by')) {
         $pattern = '<img.*?src="(.*?)">';
         preg_match($pattern, $content, $match);
         
-        return $match[1];
+        return $match;
     }
     
     //验证身份证号
