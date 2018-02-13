@@ -1,4 +1,6 @@
 <?php
+namespace Hexd;
+
 date_default_timezone_set('PRC');
 /**
  * 常用方法封装
