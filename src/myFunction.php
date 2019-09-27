@@ -1,22 +1,20 @@
 <?php
+
 namespace Hexd;
 
 date_default_timezone_set('PRC');
 /**
  * 常用方法封装
- *
  * @author  hxd
  * @time    2016-04-07
  */
 
 /**
  * 获取任一长度随机字符串
- *
- * @param   int $length 字符串长度
- *
+ * @param int $length 字符串长度
  * @return  string  $str    返回字符串
  */
-function get_salt($length) {
+function getSalt($length) {
     $str = 'abcdefghijklmnopqistuvwxyz0123456789!@#$%^&*';
     $str = str_shuffle($str);
     $rand = rand(0, strlen($str) - $length);
@@ -26,31 +24,12 @@ function get_salt($length) {
 }
 
 /**
- * IP查找
- *
- * @param   string $num ip地址
- *
- * @return  string      返回区域或城市
- */
-if (!function_exists('ip_city_ext')) {
-    function ip_city_ext($num) {
-        $info = ipnum_info($num);
-        if (empty($info)) {
-            return "未知区域";
-        }
-        
-        return strtoupper($info['area'] . ',' . $info['city']);
-    }
-}
-
-/**
  * 记录日志文件
- *
- * @param   string $logFile 日志文件
- * @param   string $data    写入数据
+ * @param string $logFile 日志文件
+ * @param string $data    写入数据
  */
-if (!function_exists("write_log")) {
-    function write_log($logFile, $data) {
+if (!function_exists("writeLog")) {
+    function writeLog($logFile, $data) {
         $dir = pathinfo($logFile)['dirname'];
         if (!is_dir($logFile)) {
             @mkdir($dir, 0755, TRUE);
@@ -61,9 +40,7 @@ if (!function_exists("write_log")) {
 
 /**
  * 验证邮箱
- *
- * @param   string $email 电子邮件地址
- *
+ * @param string $email 电子邮件地址
  * @return
  */
 if (!function_exists("validEmail")) {
@@ -79,10 +56,12 @@ if (!function_exists("validEmail")) {
 /**
  * IsMobile函数:检测参数的值是否为正确的中国手机号码格式
  * 返回值:是正确的手机号码返回手机号码,不是返回false
- *
- * @param   string $phone 手机号码
- *
+ * @param string $phone 手机号码
  * @return  mixed  false/mobile
+ *                      移动：134 135 136 137 138 139 147 150 151 152 157 158 159 178 182 183 184 187 188 198
+ *                      联通：130 131 132 145 155 156 166 171 175 176 185 186
+ *                      电信：133 149 153 173 177 180 181 189 199
+ *                      虚拟运营商: 170
  */
 if (!function_exists("validPhone")) {
     function validPhone($phone) {
@@ -90,28 +69,24 @@ if (!function_exists("validPhone")) {
             return FALSE;
         }
         
-        return preg_match("/^(13[0-9]{1}|15[0-9]{1}|18[0-9]{1}|14[0-9]{1}|17[0-9]{1})[0-9]{8}$/", $phone);
+        return preg_match('/^(0|86|17951)?(13[0-9]|15[012356789]|16[6]|19[89]|17[01345678]|18[0-9]|14[579])[0-9]{8}$/', $phone);
     }
 }
 
 /**
  * is_num函数:检测参数是否是纯数字
- *
- * @param   string $string 被检测字符串
- *
+ * @param string $string 被检测字符串
  * @return  boolean TRUE/FALSE
  */
 if (!function_exists("validNum")) {
-    function is_num($string) {
+    function validNum($string) {
         return preg_match('/^[0-9]*$/', $string) ? TRUE : FALSE;
     }
 }
 
 /**
  * validStrIsStrAndNum验证字符串是否由n-n+x个字母和数字组成(不区分大小写)
- *
- * @param    string $string 被检测字符串
- *
+ * @param string $string 被检测字符串
  * @return    bool    TRUE/FALSE
  */
 if (!function_exists('validStrIsStrAndNum')) {
@@ -123,9 +98,7 @@ if (!function_exists('validStrIsStrAndNum')) {
 /**
  * is_qq函数:检测参数的值是否符合QQ号码的格式
  * 返回值:是正确的QQ号码返回QQ号码,不是返回false
- *
- * @param   string $qq 被检测字符串
- *
+ * @param string $qq 被检测字符串
  * @return  mixed   $qq/false   返回qq号码或者false
  */
 if (!function_exists("is_qq")) {
@@ -137,12 +110,11 @@ if (!function_exists("is_qq")) {
 }
 /**
  * 验证是否为url
- *
  * @param string  $str         url地址
  * @param boolean $exp_results 是否返回结果
  */
-if (!function_exists("is_url")) {
-    function is_url($str, $exp_results = FALSE) {
+if (!function_exists("isUrl")) {
+    function isUrl($str, $exp_results = FALSE) {
         $RegExp = '/^((ht|f)tps?):\/\/[\w\-]+(\.[\w\-]+)+([\w\-\.,@?^=%&:\/~\+#]*[\w\-\@?^=%&\/~\+#])?$/';
         if (!preg_match($RegExp, $str, $m)) {
             return FALSE;
@@ -157,9 +129,7 @@ if (!function_exists("is_url")) {
 
 /**
  * 检测是否含有敏感词
- *
- * @param   string $word 被检测字符串
- *
+ * @param string $word 被检测字符串
  * @return  boolean TRUE/FALSE  是否存在
  */
 if (!function_exists("isFilterWords")) {
@@ -178,9 +148,7 @@ if (!function_exists("isFilterWords")) {
 
 /**
  * 替换敏感词汇
- *
- * @param   string $word 被替换字符串
- *
+ * @param string $word 被替换字符串
  * @return  string  $content    返回替换后的字符串
  */
 if (!function_exists("filterWords")) {
@@ -197,11 +165,10 @@ if (!function_exists("filterWords")) {
 
 /**
  * 获取客户端的IP地址
- *
  * @return  string  $ip 返回ip地址
  */
-if (!function_exists("get_client_ip")) {
-    function get_client_ip() {
+if (!function_exists("getClientIp")) {
+    function getClientIp() {
         $ks = array(
             "HTTP_X_FORWARDED_FOR",
             "HTTP_CLIENT_IP",
@@ -228,13 +195,11 @@ if (!function_exists("get_client_ip")) {
 
 /**
  * 判断是否ip地址
- *
- * @param   string $gonten 被检测字符串
- *
+ * @param string $gonten 被检测字符串
  * @return  boolean TRUE/FALSE  是否
  */
-if (!function_exists("is_ip")) {
-    function is_ip($gonten) {
+if (!function_exists("isIp")) {
+    function isIp($gonten) {
         $ip = explode(".", $gonten);
         for ($i = 0; $i < count($ip); $i++) {
             if ($ip[$i] > 255) {
@@ -248,12 +213,10 @@ if (!function_exists("is_ip")) {
 
 /**
  * 安全过滤数据
- *
- * @param   string  $str        需要处理的字符
- * @param   string  $type       返回的字符类型，支持，string,int,float,html
- * @param   maxid   $default    当出现错误或无数据时默认返回值
- * @param   boolean $checkempty 强制转化为正数
- *
+ * @param string  $str        需要处理的字符
+ * @param string  $type       返回的字符类型，支持，string,int,float,html
+ * @param maxid   $default    当出现错误或无数据时默认返回值
+ * @param boolean $checkempty 强制转化为正数
  * @return  mixed               当出现错误或无数据时默认返回值
  */
 if (!function_exists("getParam")) {
@@ -266,8 +229,6 @@ if (!function_exists("getParam")) {
                 $_str = str_replace("\"", '&quot;', $_str);
                 $_str = str_replace("\\", '', $_str);
                 $_str = str_replace("\/", '', $_str);
-                
-                $_str = daddslashes(html_escape($_str));
                 
                 break;
             case 'int': //获取整形数据
@@ -449,9 +410,7 @@ if (!function_exists("reMoveXss")) {
 
 /**
  * 校验提交的ID类值是否合法verify_id()
- *
- * @param   string $id 提交的ID值
- *
+ * @param string $id 提交的ID值
  * @return  string  返回处理后的ID
  */
 if (!function_exists("verify_id")) {
@@ -473,10 +432,8 @@ if (!function_exists("verify_id")) {
 
 /**
  * 处理form 提交的参数过滤
- *
- * @param   string /array    $string 需要处理的字符串或者数组
+ * @param string /array    $string 需要处理的字符串或者数组
  *                 $force   boolen          $force  是否强制进行处理
- *
  * @return  string/array            返回处理之后的字符串或者数组
  */
 if (!function_exists("daddslashes")) {
@@ -498,9 +455,7 @@ if (!function_exists("daddslashes")) {
 
 /**
  * 处理form 提交的参数过滤
- *
- * @param   string $string 需要处理的字符串
- *
+ * @param string $string 需要处理的字符串
  * @return  string  $str    返回处理之后的字符串或者数组
  */
 if (!function_exists("filter_form")) {
@@ -529,9 +484,7 @@ if (!function_exists("filter_form")) {
 
 /**
  * 检测提交的值是不是含有SQL注射的字符，防止注射，保护服务器安全
- *
- * @param   string $sql_str 提交的变量
- *
+ * @param string $sql_str 提交的变量
  * @return  boolean             返回检测结果，ture or false
  */
 if (!function_exists("filter_inject")) {
@@ -542,9 +495,7 @@ if (!function_exists("filter_inject")) {
 
 /**
  * 处理禁用HTML但允许换行的内容
- *
- * @param   string $msg 需要过滤的内容
- *
+ * @param string $msg 需要过滤的内容
  * @return  string          返回过滤后的字符串
  */
 if (!function_exists('TrimMsg')) {
@@ -559,9 +510,7 @@ if (!function_exists('TrimMsg')) {
 
 /**
  * PHP判断字符串纯汉字 OR 纯英文 OR 汉英混合
- *
- * @param   string $str 被检测字符串
- *
+ * @param string $str 被检测字符串
  * @return  int     1:英文 2：纯汉字 3：汉字和英文
  */
 
@@ -580,13 +529,11 @@ function str_type($str) {
 
 /**
  * 字符串截取，支持中文和其他编码
- *
- * @param   string $str     需要转换的字符串
- * @param   string $start   开始位置
- * @param   string $length  截取长度
- * @param   string $charset 编码格式
- * @param   string $suffix  截断显示字符
- *
+ * @param string $str     需要转换的字符串
+ * @param string $start   开始位置
+ * @param string $length  截取长度
+ * @param string $charset 编码格式
+ * @param string $suffix  截断显示字符
  * @return  string
  */
 function msubstr($str, $start = 0, $length, $suffix = TRUE, $charset = "utf-8") {
@@ -628,10 +575,8 @@ function msubstr($str, $start = 0, $length, $suffix = TRUE, $charset = "utf-8") 
 
 /**
  * 返回字符串长度
- *
- * @param   string $str     需要计算的字符串
- * @param   string $charset 字符编码
- *
+ * @param string $str     需要计算的字符串
+ * @param string $charset 字符编码
  * @return  length  int
  */
 
@@ -650,11 +595,10 @@ function abslength($str, $charset = 'utf-8') {
 
 /**
  * 加密解密方法
- *
- * @param   string $string    明文或密文
- * @param   string $operation 加密ENCODE或解密DECODE
- * @param   string $key       密钥
- * @param   int    $expiry    密钥有效期 ， 默认是一直有效
+ * @param string $string    明文或密文
+ * @param string $operation 加密ENCODE或解密DECODE
+ * @param string $key       密钥
+ * @param int    $expiry    密钥有效期 ， 默认是一直有效
  */
 if (!function_exists("auth_code")) {
     function auth_code($string, $operation = 'DECODE', $key = '', $expiry = 0) {
@@ -719,9 +663,7 @@ if (!function_exists("auth_code")) {
 
 /**
  * 计算密码强度
- *
- * @param   string $password 被检测字符串
- *
+ * @param string $password 被检测字符串
  * @return  int     $level      安全等级
  */
 if (!function_exists("getPassLevel")) {
@@ -785,24 +727,8 @@ if (!function_exists("getPassLevel")) {
 }
 
 /**
- * 获取订单号
- *
- * @return  string  返回订单号
- */
-if (!function_exists('get_order_sn')) {
-    function get_order_sn() {
-        /* 选择一个随机的方案 */
-        mt_srand((double)microtime() * 1000000);
-        
-        return date('YmdHis') . str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
-    }
-}
-
-/**
  * JSON输出
- *
- * @param   array $data 数组
- *
+ * @param array $data 数组
  * @return  string          json字符串
  */
 if (!function_exists("printJson")) {
@@ -820,7 +746,6 @@ if (!function_exists("printJson")) {
 
 /**
  * 发送http请求
- *
  * @return string
  */
 function sendHttp($url, $data = array(), $post = TRUE, $httpHeader = array(), $cookieFile = '/tmp/mycookiefile') {
@@ -837,6 +762,8 @@ function sendHttp($url, $data = array(), $post = TRUE, $httpHeader = array(), $c
         CURLOPT_USERAGENT      => 'CURL ' . date('Y-m-d H:i:s'),
         CURLOPT_FOLLOWLOCATION => TRUE,
         CURLOPT_TIMEOUT        => 10,
+        CURLOPT_SSL_VERIFYHOST => 0,
+        CURLOPT_SSL_VERIFYPEER => 0,
     );
     if ($post) {
         $options[CURLOPT_POST] = TRUE;
@@ -859,10 +786,8 @@ function sendHttp($url, $data = array(), $post = TRUE, $httpHeader = array(), $c
 
 /**
  * 获取随机数
- *
  * @param        $length 随记数长度
  * @param string $chars  随机字符串
- *
  * @return string 返回生成的随机数
  */
 function random($length, $chars = '0123456789') {
@@ -891,13 +816,10 @@ function sortArray($source, $filed, $sort = 'desc') {
 
 /**
  * 字符串查找，是否包含
- *
- * @param   string $str  被检测字符串
- * @param   string $find 查找字符串
- *
+ * @param string $str  被检测字符串
+ * @param string $find 查找字符串
  * @return  bool    TRUE/FALS   是否
  */
-
 function isContain($str, $find) {
     if (empty($find)) {
         return TRUE;
@@ -913,11 +835,9 @@ function isContain($str, $find) {
 
 /**
  * 数组中是否包含某个字符串
- *
- * @param   array  $source 数组
- * @param   string $search 被检测字符串
- * @param   string $d      分隔符默认是','
- *
+ * @param array  $source 数组
+ * @param string $search 被检测字符串
+ * @param string $d      分隔符默认是','
  * @return  bool    TRUE/FALSE  是/否
  */
 function in_array_exist($source, $search, $d = ',') {
@@ -956,7 +876,6 @@ function cur_page_url() {
 
 /**
  * cookie设置
- *
  * @param $var    设置的cookie名
  * @param $value  设置的cookie值
  * @param $life   设置的过期时间：为整型，单位秒 如60表示60秒后过期
@@ -972,10 +891,8 @@ function sets_cookie($array, $life = 0, $path = '/', $domain = COOKIE_DOMAIN) {
 
 /**
  * 缓存文件
- *
- * @param   int $id  缓存id
- * @param   int $key 缓存文件名
- *
+ * @param int $id  缓存id
+ * @param int $key 缓存文件名
  * @return  string      缓存路径
  */
 if (!function_exists('get_cache_key')) {
@@ -993,52 +910,10 @@ if (!function_exists('get_cache_key')) {
 }
 
 /**
- * 科学计算法多值的计算
- * 加bcadd($a, $b, 4)（留4位小数）
- * 减bcsub($a, $b, 4)
- * 乘bcmul($a, $b, 4)
- * 除bcdiv($a, $b, 4)
- * 取余bcmod($a, $b)
- *
- * @param array  $num_arr 数字数组
- * @param string $method  +-*\/%
- * @param number $scale   保留几位小数
- */
-function calculate($num1, $num2, $method = '+', $scale = 4) {
-    
-    $func = '';
-    switch ($method) {
-        case '+':
-            $func = 'bcadd';
-            break;
-        case '-':
-            $func = 'bcsub';
-            break;
-        case '*':
-            $func = 'bcmul';
-            break;
-        case '/':
-            $func = 'bcdiv';
-            break;
-        case '%':
-            $func = 'bcmod';
-            break;
-        default:
-            return FALSE;
-    }
-    
-    $reNum = $func($num1, $num2, $scale);
-    
-    return $reNum;
-}
-
-/**
  * 文件写入操作
- *
- * @param   string $path 文件路径
- * @param   string $data 写入数据
- * @param   string $mode 写入模式
- *
+ * @param string $path 文件路径
+ * @param string $data 写入数据
+ * @param string $mode 写入模式
  * @return  boolean           是否成功
  */
 function write_txt($path, $data, $mode = FOPEN_WRITE_CREATE_DESTRUCTIVE) {
@@ -1055,28 +930,10 @@ function write_txt($path, $data, $mode = FOPEN_WRITE_CREATE_DESTRUCTIVE) {
 }
 
 /**
- * 记录上报日志
- *
- * @param   string $data 上报数据
- * @param   string $type 日志类型
- */
-function write_report_log($data, $type) {
-    
-    $path = APPPATH . "logs/" . $type . '/' . date('Ymd', time()) . '/';
-    if (!is_dir($path)) {
-        @mkdir($path, 0755, TRUE);
-    }
-    
-    $filename = $path . date('Ymd-H') . '.log';
-    write_txt($filename, $data, "a+");
-}
-
-/**
  * json返回结果
- *
- * @param   string $code 状态码
- * @param   string $msg  返回信息
- * @param   array  $data 返回数据
+ * @param string $code 状态码
+ * @param string $msg  返回信息
+ * @param array  $data 返回数据
  */
 function PJsonMsg($code, $msg, $data = array()) {
     $result = array(
@@ -1089,568 +946,10 @@ function PJsonMsg($code, $msg, $data = array()) {
     printJson($result);
 }
 
-//新版 api3.3及以上的签名算法
-class Checksum {
-    private static $BYTE_TABLE = array(
-        "20",
-        "bb",
-        "40",
-        "d4",
-        "4e",
-        "00",
-        "ec",
-        "3d",
-        "2f",
-        "a5",
-        "d4",
-        "2f",
-        "7d",
-        "1e",
-        "11",
-        "d7",
-        "b2",
-        "74",
-        "20",
-        "e9",
-        "e3",
-        "8b",
-        "c0",
-        "47",
-        "e1",
-        "c9",
-        "91",
-        "bf",
-        "84",
-        "03",
-        "00",
-        "85",
-        "3d",
-        "a5",
-        "51",
-        "c2",
-        "c8",
-        "dc",
-        "e3",
-        "17",
-        "cb",
-        "3e",
-        "e2",
-        "98",
-        "55",
-        "6a",
-        "ad",
-        "99",
-        "23",
-        "61",
-        "ad",
-        "c8",
-        "f7",
-        "08",
-        "2f",
-        "5f",
-        "d6",
-        "a7",
-        "a9",
-        "cd",
-        "38",
-        "e3",
-        "2e",
-        "e5",
-        "82",
-        "9f",
-        "22",
-        "42",
-        "7e",
-        "4b",
-        "2b",
-        "9d",
-        "e2",
-        "72",
-        "c6",
-        "3b",
-        "50",
-        "14",
-        "d1",
-        "af",
-        "9f",
-        "65",
-        "21",
-        "70",
-        "0c",
-        "f0",
-        "e4",
-        "73",
-        "51",
-        "69",
-        "4a",
-        "de",
-        "c1",
-        "54",
-        "26",
-        "2a",
-        "b6",
-        "5c",
-        "71",
-        "21",
-        "1f",
-        "1f",
-        "18",
-        "c8",
-        "49",
-        "f8",
-        "32",
-        "d3",
-        "36",
-        "6f",
-        "83",
-        "6e",
-        "7b",
-        "d7",
-        "32",
-        "1d",
-        "d9",
-        "8a",
-        "d9",
-        "07",
-        "46",
-        "a8",
-        "f0",
-        "27",
-        "da",
-        "97",
-        "8b",
-        "78",
-        "58",
-        "64",
-        "f0",
-        "ac",
-        "64",
-        "ea",
-        "fa",
-        "02",
-        "5f",
-        "c9",
-        "e5",
-        "38",
-        "e7",
-        "6f",
-        "20",
-        "4c",
-        "a5",
-        "1a",
-        "be",
-        "4f",
-        "21",
-        "56",
-        "f5",
-        "f2",
-        "68",
-        "8b",
-        "d0",
-        "48",
-        "5c",
-        "de",
-        "38",
-        "de",
-        "8e",
-        "3a",
-        "1f",
-        "99",
-        "92",
-        "62",
-        "07",
-        "cb",
-        "47",
-        "32",
-        "d1",
-        "11",
-        "e3",
-        "5e",
-        "67",
-        "d0",
-        "7a",
-        "df",
-        "7a",
-        "44",
-        "80",
-        "43",
-        "c3",
-        "6a",
-        "95",
-        "e4",
-        "48",
-        "3f",
-        "2a",
-        "a4",
-        "f0",
-        "ce",
-        "ea",
-        "a5",
-        "e2",
-        "d4",
-        "60",
-        "77",
-        "97",
-        "3b",
-        "3e",
-        "0f",
-        "d3",
-        "96",
-        "c8",
-        "eb",
-        "5f",
-        "1d",
-        "48",
-        "11",
-        "9c",
-        "77",
-        "21",
-        "cc",
-        "cb",
-        "bb",
-        "53",
-        "e0",
-        "d3",
-        "1d",
-        "a9",
-        "11",
-        "5c",
-        "34",
-        "cb",
-        "6e",
-        "ee",
-        "f9",
-        "93",
-        "b7",
-        "76",
-        "d1",
-        "9c",
-        "33",
-        "e7",
-        "2f",
-        "4e",
-        "32",
-        "ae",
-        "76",
-        "f7",
-        "1e",
-        "23",
-        "4f",
-        "92",
-        "17",
-        "03",
-        "66",
-        "5e",
-        "fa",
-        "12",
-        "2a",
-        "11",
-        "a7",
-        "01",
-        "04",
-    );
-    
-    private static function getKey($num) {
-        $sb = "";
-        for ($i = 0; $i < 4; $i++) {
-            $tmp = 1 << $i;
-            $v = self::$BYTE_TABLE[$tmp];
-            $sb .= $v;
-        }
-        $n = $num;
-        while ($n > 0) {
-            $idx = $n & 0xff;
-            $n = $num >> 16;
-            $v = self::$BYTE_TABLE[$idx];
-            $sb .= $v;
-        }
-        
-        return $sb;
-    }
-    
-    private static function byte2hex($string) {
-        $buf = "";
-        for ($i = 0; $i < strlen($string); $i++) {
-            $val = dechex(ord($string{$i}));
-            if (strlen($val) < 2) {
-                $val = "0" . $val;
-            }
-            $buf .= $val;
-        }
-        
-        return $buf;
-    }
-    
-    private static function hex2byte($string) {
-        $buf = "";
-        for ($i = 0; $i < strlen($string); $i += 2) {
-            $item = substr($string, $i, 2);
-            $item = hexdec($item);
-            $val = chr($item);
-            $buf .= $val;
-        }
-        
-        return $buf;
-    }
-    
-    public static function encode($data, $key) {
-        
-        $key = self::getKey($key);
-        $mac_key = hash_hmac('sha256', $data, $key);
-        $rs = "";
-        $bytes = self::hex2byte($mac_key);
-        if (!empty($bytes)) {
-            for ($i = 0; $i < strlen($bytes) / 2; $i++) {
-                $rs .= $bytes{$i * 2};
-            }
-        }
-        $rs = self::byte2hex($rs);
-        
-        return $rs;
-    }
-}
-
-//获取积分的对称加密算法
-class DES {
-    static function encrypt($key, $encrypt) {
-        // 根据 PKCS#7 RFC 5652 Cryptographic Message Syntax (CMS) 修正 Message 加入 Padding
-        $block = mcrypt_get_block_size(MCRYPT_DES, MCRYPT_MODE_ECB);
-        $pad = $block - (strlen($encrypt) % $block);
-        $encrypt .= str_repeat(chr($pad), $pad);
-        
-        // 不需要设定 IV 进行加密
-        $passcrypt = mcrypt_encrypt(MCRYPT_DES, $key, $encrypt, MCRYPT_MODE_ECB);
-        
-        return base64_encode($passcrypt);
-    }
-    
-    static function decrypt($key, $decrypt) {
-        // 不需要设定 IV
-        $str = mcrypt_decrypt(MCRYPT_DES, $key, base64_decode($decrypt), MCRYPT_MODE_ECB);
-        
-        // 根据 PKCS#7 RFC 5652 Cryptographic Message Syntax (CMS) 修正 Message 移除 Padding
-        $pad = ord($str[strlen($str) - 1]);
-        
-        return substr($str, 0, strlen($str) - $pad);
-    }
-}
-
-/**
- * app key 算法
- */
-class APPKEY {
-    
-    static $INDEXS = array(
-        5,
-        0,
-        7,
-        2,
-        6,
-        1,
-        4,
-        3,
-    );
-    static $MASKS = array(
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    );
-    
-    static function int2bytes($v1, $v2) {
-        
-        $buf = array();
-        for ($i = 0; $i < 4; $i++) {
-            $buf[3 - $i] = ($v1 >> ($i * 8)) & 0xff;
-        }
-        for ($i = 0; $i < 4; $i++) {
-            $buf[7 - $i] = ($v2 >> ($i * 8)) & 0xff;
-        }
-        
-        return $buf;
-    }
-    
-    static function bytes_encode($buf) {
-        
-        if (count($buf) != 8) {
-            return NULL;
-        }
-        
-        $result = array();
-        for ($i = 0; $i < 8; $i++) {
-            $f = self::$INDEXS[$i];
-            $result[$i] = ($buf[$f]) ^ (self::$MASKS[$i]);
-        }
-        
-        return $result;
-    }
-    
-    //编码
-    static function encode($uid, $appid) {
-        $buf = self::int2bytes($uid, $appid);
-        $bytes = self::bytes_encode($buf);
-        
-        return sprintf("%02X%02X%02X%02X%02X%02X%02X%02X", $bytes[0], $bytes[1], $bytes[2], $bytes[3], $bytes[4], $bytes[5], $bytes[6], $bytes[7]);
-    }
-}
-
-/**
- * Drkey 算法
- * $uid, $appid,$cid,$adid,$udid
- * '4816', '4485','6105','2806','24B0D5A7-20E9-4815-86D5-A033F33449C2'
- * 00008512110000D00000F6170A0000D924B0D5A7-20E9-4815-86D5-A033F33449C2
- */
-class DrKey {
-    
-    static $INDEXS = array(
-        5,
-        0,
-        7,
-        2,
-        6,
-        1,
-        4,
-        3,
-    );
-    static $MASKS = array(
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    );
-    
-    static function int2bytes($v1, $v2) {
-        
-        $buf = array();
-        for ($i = 0; $i < 4; $i++) {
-            $buf[3 - $i] = ($v1 >> ($i * 8)) & 0xff;
-        }
-        for ($i = 0; $i < 4; $i++) {
-            $buf[7 - $i] = ($v2 >> ($i * 8)) & 0xff;
-        }
-        
-        return $buf;
-    }
-    
-    static function bytes_encode($buf) {
-        
-        if (count($buf) != 8) {
-            return NULL;
-        }
-        
-        $result = array();
-        for ($i = 0; $i < 8; $i++) {
-            $f = self::$INDEXS[$i];
-            $result[$i] = ($buf[$f]) ^ (self::$MASKS[$i]);
-        }
-        
-        return $result;
-    }
-    
-    function bytes_decode($buf) {
-        
-        if (count($buf) != 8) {
-            return NULL;
-        }
-        
-        $result = array();
-        for ($i = 0; $i < 8; $i++) {
-            $f = self::$INDEXS[$i];
-            $result[$f] = ($buf[$i]) ^ (self::$MASKS[$i]);
-        }
-        
-        return $result;
-    }
-    
-    static function appkey_encode($uid, $appid) {
-        
-        $buf = self::int2bytes($uid, $appid);
-        $bytes = self::encode($buf);
-        
-        return sprintf("%02X%02X%02X%02X%02X%02X%02X%02X", $bytes[0], $bytes[1], $bytes[2], $bytes[3], $bytes[4], $bytes[5], $bytes[6], $bytes[7]);
-    }
-    
-    static function appkey_decode($key) {
-        
-        $len = strlen($key);
-        $bytes = array();
-        $k = 0;
-        for ($i = 0; $i < $len; $i += 2) {
-            $code = substr($key, $i, 2);
-            $bytes[$k++] = hexdec($code);
-        }
-        
-        $bytes = self::bytes_decode($bytes);
-        
-        $v2 = ($bytes[4] << 24) | ($bytes[5] << 16) | ($bytes[6] << 8) | $bytes[7];
-        $v1 = ($bytes[0] << 24) | ($bytes[1] << 16) | ($bytes[2] << 8) | $bytes[3];
-        
-        return array(
-            'v1' => $v1,
-            "v2" => $v2,
-        );
-    }
-    
-    //编码
-    static function encode($uid, $appid, $cid, $adid, $udid) {
-        $buf = self::int2bytes($uid, $appid);
-        $buf_ads = self::int2bytes($cid, $adid);
-        $bytes = self::bytes_encode($buf);
-        $bytes_ads = self::bytes_encode($buf_ads);
-        $result = sprintf("%02X%02X%02X%02X%02X%02X%02X%02X", $bytes[0], $bytes[1], $bytes[2], $bytes[3], $bytes[4], $bytes[5], $bytes[6], $bytes[7]);
-        $result .= sprintf("%02X%02X%02X%02X%02X%02X%02X%02X", $bytes_ads[0], $bytes_ads[1], $bytes_ads[2], $bytes_ads[3], $bytes_ads[4], $bytes_ads[5], $bytes_ads[6], $bytes_ads[7]);
-        
-        return $result . $udid;
-    }
-    
-    static function decode($drkey) {
-        
-        $len = strlen($drkey);
-        $appkey = substr($drkey, 0, 16);
-        $adskey = substr($drkey, 16, 16);
-        
-        $mac = '02:00:00:00:00:00';
-        $idfa = '';
-        if ($len - 32 > 17) {
-            if (strpos($drkey, ':')) {
-                $mac = substr($drkey, 32, 17);
-                if ($len - 49 > 0) {
-                    $idfa = substr($drkey, 49, $len - 49);
-                }
-            } else {
-                $idfa = substr($drkey, 32, $len - 32);
-            }
-        } else {
-            $mac = substr($drkey, 32, 17);
-        }
-        $appkey = self::appkey_decode($appkey);
-        $adskey = self::appkey_decode($adskey);
-        
-        return array(
-            "mac"   => $mac,
-            "idfa"  => $idfa,
-            "uid"   => $appkey['v1'],
-            "appid" => $appkey['v2'],
-            "cid"   => $adskey['v1'],
-            "adid"  => $adskey['v2'],
-        );
-    }
-}
-
 /**
  * 使用openssl库进行加密
- *
- * @param  string $string 要加密字符串
- * @param  string $key    加密key
- *
+ * @param string $string 要加密字符串
+ * @param string $key    加密key
  * @return string   $string 加密后的字符串
  */
 function opensslEncrypt($string, $key, $method = 'AES-256-ECB') {
@@ -1661,10 +960,8 @@ function opensslEncrypt($string, $key, $method = 'AES-256-ECB') {
 
 /**
  * 使用openssl库进行解密
- *
- * @param  string $string 要解密字符串
- * @param  string $key    解密key
- *
+ * @param string $string 要解密字符串
+ * @param string $key    解密key
  * @return string   $string 解密后的字符串
  */
 function opensslDecrypt($string, $key, $method = 'AES-256-ECB') {
@@ -1682,36 +979,161 @@ function get_utf8($string) {
 }
 
 /**
- * 判断文件规格
- *
- * @param   array  $uploadfile 上传文件
- * @param   string $filetype   文件类型
- * @param   string $width      文件宽度
- * @param   string $height     文件高度
- * @param   string $maxSize    最大容量
- *
- * @return  mixed
+ *AES加密字符串方法
+ * @param string $key    加密key
+ * @param string $string 被加密字符串
+ * @return string  $string 返回加密后的字符串
  */
-function check_upload_file($uploadfile, $filetype = 'images', $maxSize = IMAGEMAXSIZE) {
-    //检测是否是图片
-    $result = getimagesize($uploadfile);
-    if ($result === FALSE) {
-        return 'typeError';
-    } else {
-        if ($result['bits'] > $maxSize) {
-            return 'sizeError';
-        }
-    }
+function aes_encode($key, $string) {
+    $aes = new CryptAES($key);
+    $string = $aes->encrypt($string);
     
-    return TRUE;
+    return $string;
 }
 
 /**
+ * AES解密字符串方法
+ * @param string $key    加密key
+ * @param string $string 被解密字符串
+ * @return  string $string 返回解密后的字符串
+ */
+function aes_decode($key, $string) {
+    $aes = new CryptAES($key);
+    $string = $aes->decrypt($string);
+    
+    return $string;
+}
+
+//AES加密解密算法
+class CryptAES {
+    protected $cipher = MCRYPT_RIJNDAEL_128;
+    protected $mode = MCRYPT_MODE_ECB;
+    protected $pad_method = NULL;
+    protected $secret_key = '';
+    protected $iv = '';
+    
+    public function __construct($key) {
+        $this->require_pkcs5();
+        $this->secret_key = $key;
+    }
+    
+    public function require_pkcs5() {
+        $this->pad_method = 'pkcs5';
+    }
+    
+    public static function hex2bin($hexdata) {
+        $bindata = '';
+        $length = strlen($hexdata);
+        for ($i = 0; $i < $length; $i += 2) {
+            $bindata .= chr(hexdec(substr($hexdata, $i, 2)));
+        }
+        
+        return $bindata;
+    }
+    
+    public static function pkcs5_pad($text, $blocksize) {
+        $pad = $blocksize - (strlen($text) % $blocksize);
+        
+        return $text . str_repeat(chr($pad), $pad);
+    }
+    
+    public static function pkcs5_unpad($text) {
+        $pad = ord($text{strlen($text) - 1});
+        if ($pad > strlen($text)) {
+            return FALSE;
+        }
+        if (strspn($text, chr($pad), strlen($text) - $pad) != $pad) {
+            return FALSE;
+        }
+        
+        return substr($text, 0, -1 * $pad);
+    }
+    
+    public function set_cipher($cipher) {
+        $this->cipher = $cipher;
+    }
+    
+    public function set_mode($mode) {
+        $this->mode = $mode;
+    }
+    
+    public function set_iv($iv) {
+        $this->iv = $iv;
+    }
+    
+    public function set_key($key) {
+        $this->secret_key = $key;
+    }
+    
+    public function encrypt($str) {
+        $str = $this->pad($str);
+        $td = mcrypt_module_open($this->cipher, '', $this->mode, '');
+        
+        if (empty($this->iv)) {
+            $iv = @mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+        } else {
+            $iv = $this->iv;
+        }
+        
+        mcrypt_generic_init($td, $this->secret_key, $iv);
+        $cyper_text = mcrypt_generic($td, $str);
+        $rt = base64_encode($cyper_text);
+        //$rt = bin2hex($cyper_text);
+        mcrypt_generic_deinit($td);
+        mcrypt_module_close($td);
+        
+        return $rt;
+    }
+    
+    protected function pad($str) {
+        return $this->pad_or_unpad($str, '');
+    }
+    
+    protected function pad_or_unpad($str, $ext) {
+        if (is_null($this->pad_method)) {
+            return $str;
+        } else {
+            $func_name = __CLASS__ . '::' . $this->pad_method . '_' . $ext . 'pad';
+            if (is_callable($func_name)) {
+                $size = mcrypt_get_block_size($this->cipher, $this->mode);
+                
+                return call_user_func($func_name, $str, $size);
+            }
+        }
+        
+        return $str;
+    }
+    
+    public function decrypt($str) {
+        $td = mcrypt_module_open($this->cipher, '', $this->mode, '');
+        
+        if (empty($this->iv)) {
+            $iv = @mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
+        } else {
+            $iv = $this->iv;
+        }
+        
+        mcrypt_generic_init($td, $this->secret_key, $iv);
+        //$decrypted_text = mdecrypt_generic($td, self::hex2bin($str));
+        $decrypted_text = mdecrypt_generic($td, base64_decode($str));
+        $rt = $decrypted_text;
+        mcrypt_generic_deinit($td);
+        mcrypt_module_close($td);
+        
+        return $this->unpad($rt);
+    }
+    
+    protected function unpad($str) {
+        return $this->pad_or_unpad($str, 'un');
+    }
+    
+}
+
+
+/**
  * 遍历替换
- *
- * @param   array  $arr     要遍历的数组
- * @param   string $replace 要替换的元素
- *
+ * @param array  $arr     要遍历的数组
+ * @param string $replace 要替换的元素
  * @return  string  $replace    返回替换过的元素
  */
 function foreach_arr($arr, $replace) {
@@ -1861,10 +1283,9 @@ function get_excel($title, $data) {
 
 /**
  * 发送电子邮件
- *
- * @param   string $to      收件人
- * @param   string $subject 标题
- * @param   string $message 内容
+ * @param string $to      收件人
+ * @param string $subject 标题
+ * @param string $message 内容
  */
 function send_email($to, $subject, $message) {
     $ci = &get_instance();
@@ -1949,24 +1370,6 @@ function request_source() {
     return $domain;
 }
 
-/**
- * 预约防刷
- *
- * @param   string $key      key
- * @param   int    $interval 间隔秒数
- *
- * @return  string
- */
-function prevent_brush($key, $interval) {
-    $brush_key = $key . ip2long(get_client_ip());
-    $now = time();
-    if (isset($_SESSION[$brush_key]) && ($now - $_SESSION[$brush_key] < 0)) {
-        PJsonMsg(REQUEST_ERROR, lang('server_busy'));
-    } else {
-        $_SESSION[$brush_key] = $now + $interval;
-    }
-}
-
 //获取浏览器支持语言
 function get_language() {
     $lang = empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? 'zh-C' : substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 4);
@@ -1983,16 +1386,9 @@ function get_language() {
     return $lang;
 }
 
-//打印错误
-function print_error($error_code, $error_msg = SERVER_ERROR) {
-    PJsonMsg($error_code, lang($error_msg));
-}
-
 /**
  * 删除数组中为空的元素
- *
  * @param   $array  被检测数组
- *
  * @return  mixed
  */
 function filter_arr($array) {
@@ -2005,42 +1401,13 @@ function filter_arr($array) {
     return $array;
 }
 
-/**
- * 验证表单数据
- *
- * @param array  $array  被检测数组
- * @param string $except 非空数组/字符串
- *
- * @return mixed
- */
-function check_data($array, $except) {
-    //判断必填参数是否为空
-    foreach ($array as $key => $value) {
-        if (is_array($except)) {
-            if (in_array($key, $except)) {
-                continue;
-            }
-        } else {
-            if ($key === $except) {
-                continue;
-            }
-        }
-        if (empty($value)) {
-            PJsonMsg(REQUEST_FAIL, lang('param_illegal'), $key);
-        }
-    }
-    
-    return $array;
-}
 
 /**
  *  不加千分位逗号的数字格式化
- *
  * @param        $number        要格式化的数字
  * @param int    $decimals      小数位数
  * @param string $dec_point     小数点
  * @param string $thousands_sep 千分位符号
- *
  * @return string
  */
 function _number_format($number, $decimals = 0, $dec_point = '.', $thousands_sep = '') {
@@ -2050,9 +1417,7 @@ function _number_format($number, $decimals = 0, $dec_point = '.', $thousands_sep
 
 /**
  * 获取本周的开始时间与结束时间
- *
  * @param $first   int  默认 1 表示每周星期一为开始日期 0表示每周日为开始日期
- *
  * @return $arr    array   开始结束时间
  */
 function get_week_range($first = 1) {
@@ -2069,11 +1434,9 @@ function get_week_range($first = 1) {
 
 /**
  * 时间格式化
- *
  * @param $time     int     时间戳
  * @param $format   string  时间格式:默认 Y-m-d H:i:s
  * @param $format   int     间隔
- *
  * @return false|string
  */
 function formatDate($time, $format = 'Y/m/d H:i', $offset = 60) {
@@ -2100,9 +1463,7 @@ function formatDate($time, $format = 'Y/m/d H:i', $offset = 60) {
 
 /**
  * 获取任意长度用户名
- *
- * @param   int $length 字符串长度
- *
+ * @param int $length 字符串长度
  * @return  string  $str    返回字符串
  */
 function get_username($length) {
@@ -2145,7 +1506,6 @@ if (!function_exists('array_sort_by')) {
     
     /**
      * 访问客户端类型
-     *
      * @return bool
      */
     function get_client() {
